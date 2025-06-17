@@ -22,6 +22,11 @@ class DB_Manager:
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
                 category TEXT,
                 status TEXT DEFAULT 'pending')""") 
+         #  self.conn.execute("""CREATE TABLE IF NOT EXISTS all_feedbacks
+         #       id INTEGER PRIMARY KEY,
+         #       message TEXT,
+         #       estimation INTEGER,
+         #       timestamp DATETIME DEFAULT CURRENT_TIMESTAMP           """)
             
     def insert_questions(self):
         default_questions = [

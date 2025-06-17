@@ -23,7 +23,7 @@ def create_questions_keyboard():
     markup.add(types.KeyboardButton('Назад в меню'))
     return markup
 
-@bot.message_handler(commands=['start', 'help'])
+@bot.message_handler(commands=['start'])
 def start_command(message):
     user_states[message.chat.id] = None
     bot.send_message(
@@ -205,9 +205,15 @@ def back_to_menu(message):
 
 @bot.message_handler(func=lambda message: True)
 def answer_question(message):
+    user_id = message.chat.id
     answer = manager.get_answer(message.text)
     if answer:
-        bot.send_message(message.chat.id, answer)
+        markup = types.InlineKeyboardMarkup()
+        yes = types.InlineKeyboardButton("Да, оставить отзыв", callback_data="yes")
+        no = types.InlineKeyboardButton("Нет, связатся с администрацией", callback_data="no")
+        markup.add(yes, no)
+        bot.send_message(user_id, answer)
+        bot.send_message(user_id, "Вам помог данный отзыв?", reply_markup=markup)
     else:
         bot.send_message(
             message.chat.id,
@@ -219,6 +225,20 @@ def answer_question(message):
             "Выберите действие:",
             reply_markup=create_main_keyboard()
         )
+@bot.callback_query_handler(func=lambda call: call.data == "yes")
+def handle_yes(call):
+  pass
+
+@bot.callback_query_handler(func=lambda call: call.data == "no")
+def handle_no(call):
+    bot.answer_callback_query(call.id)
+    bot.send_message(
+        call.message.chat.id,
+        "Пожалуйста, напишите ваш вопрос администратору:",
+        reply_markup=types.ForceReply(selective=True)
+    )
+    user_states[call.message.chat.id] = "message_question"
+
 
 if __name__ == '__main__':
     bot.polling(none_stop=True)
