@@ -19,8 +19,10 @@ class DB_Manager:
                 user_id INTEGER,
                 username TEXT,
                 message TEXT,
-                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)""")
-
+                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                category TEXT,
+                status TEXT DEFAULT 'pending')""") 
+            
     def insert_questions(self):
         default_questions = [
             ("Бот не отвечает", "Проверьте интернет-соединение. Если проблема не исчезнет, обратитесь к @dimon_chad69"),
@@ -41,7 +43,9 @@ class DB_Manager:
             result = cursor.fetchone()
             return result[0] if result else None
 
-    def save_user_message(self, user_id, username, message):
+    def save_user_message(self, user_id, username, message, category, status='pending'): 
         with self.conn:
-            self.conn.execute("INSERT INTO user_messages (user_id, username, message) VALUES (?, ?, ?)", 
-                            (user_id, username, message))
+            self.conn.execute("INSERT INTO user_messages (user_id, username, message, category, status) VALUES (?, ?, ?, ?, ?)", 
+                            (user_id, username, message, category, status))
+            
+  

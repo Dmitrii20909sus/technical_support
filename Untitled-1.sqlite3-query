@@ -1,0 +1,7 @@
+-- database: ./database.db
+
+-- Чтобы выполнить весь файл, нажмите кнопку ▷ в правом верхнем углу окна.
+
+SELECT * FROM user_messages;
+
+ALTER TABLE user_messages ADD COLUMN category
